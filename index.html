@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#09090b" />
+  <title>Bit House — Content Calendar</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">B</div>
+        <div>
+          <strong>BIT HOUSE</strong>
+          <span>Content OS</span>
+        </div>
+      </div>
+
+      <div class="campaign-card">
+        <span class="eyebrow">CAMPAIGN</span>
+        <h2>30 Days of Building</h2>
+        <p>Posicionamento, autoridade e aquisição para o estúdio.</p>
+        <div class="progress-wrap">
+          <div class="progress-top">
+            <span>Progresso</span>
+            <strong id="progressText">0%</strong>
+          </div>
+          <div class="progress-bar"><i id="progressBar"></i></div>
+          <small id="progressCount">0 de 30 publicados</small>
+        </div>
+      </div>
+
+      <nav class="side-nav">
+        <button class="nav-btn active" data-view="calendar">▦ <span>Calendário</span></button>
+        <button class="nav-btn" data-view="pipeline">◉ <span>Pipeline</span></button>
+        <button class="nav-btn" data-view="metrics">↗ <span>Métricas</span></button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="exportBtn" class="ghost-btn">Exportar progresso</button>
+        <label class="ghost-btn import-label">
+          Importar progresso
+          <input id="importInput" type="file" accept=".json" hidden />
+        </label>
+        <p>Dados salvos neste navegador.</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <span class="eyebrow">BIT HOUSE / EDITORIAL</span>
+          <h1>Content Calendar</h1>
+          <p>30 dias para transformar conteúdo em marca, comunidade e oportunidades.</p>
+        </div>
+        <div class="top-actions">
+          <button id="todayBtn" class="secondary-btn">Hoje</button>
+          <button id="resetBtn" class="danger-btn">Resetar campanha</button>
+        </div>
+      </header>
+
+      <section class="stats">
+        <div class="stat-card">
+          <span>Publicados</span>
+          <strong id="statPublished">0</strong>
+          <small>de 30 posts</small>
+        </div>
+        <div class="stat-card">
+          <span>Em produção</span>
+          <strong id="statProduction">0</strong>
+          <small>posts ativos</small>
+        </div>
+        <div class="stat-card">
+          <span>TOFU</span>
+          <strong id="statTofu">0</strong>
+          <small>posts de descoberta</small>
+        </div>
+        <div class="stat-card">
+          <span>BOFU</span>
+          <strong id="statBofu">0</strong>
+          <small>posts de conversão</small>
+        </div>
+      </section>
+
+      <section class="toolbar">
+        <div class="search-box">
+          <span>⌕</span>
+          <input id="searchInput" type="search" placeholder="Buscar post, pilar, legenda..." />
+        </div>
+        <select id="statusFilter">
+          <option value="all">Todos os status</option>
+          <option value="planned">Planejado</option>
+          <option value="production">Em produção</option>
+          <option value="scheduled">Agendado</option>
+          <option value="published">Publicado</option>
+        </select>
+        <select id="funnelFilter">
+          <option value="all">Todos os funis</option>
+          <option value="TOFU">TOFU</option>
+          <option value="MOFU">MOFU</option>
+          <option value="BOFU">BOFU</option>
+          <option value="Community">Community</option>
+        </select>
+        <select id="pillarFilter">
+          <option value="all">Todos os pilares</option>
+          <option value="Build in Public">Build in Public</option>
+          <option value="Showcase">Showcase</option>
+          <option value="Game Dev Knowledge">Game Dev Knowledge</option>
+          <option value="Behind the Scenes">Behind the Scenes</option>
+          <option value="Community">Community</option>
+          <option value="Business / Studio">Business / Studio</option>
+        </select>
+      </section>
+
+      <section id="calendarView" class="view active"></section>
+      <section id="pipelineView" class="view"></section>
+      <section id="metricsView" class="view"></section>
+    </main>
+  </div>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-backdrop" data-close="true"></div>
+    <article class="modal-card">
+      <button class="modal-close" data-close="true">×</button>
+      <div id="modalContent"></div>
+    </article>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    window.BIT_HOUSE_POSTS = [
+  {
+    "day": 1,
+    "date": "2026-08-21",
+    "time": "18:00",
+    "title": "Manifesto — We build worlds",
+    "pillar": "Build in Public",
+    "funnel": "TOFU",
+    "format": "Vídeo / Showcase",
+    "objective": "Apresentar a Bit House e gerar reconhecimento de marca.",
+    "idea": "Vídeo curto com cortes de vários trabalhos: 3D, UI, ambientes, scripting e cenas dentro do Roblox.",
+    "hook": "We don't just make assets. We build worlds.",
+    "caption": "Every game starts with an idea.\n\nAt Bit House, we turn those ideas into playable worlds.\n\n3D. UI. Systems. Environments. Assets.\n\nThis is just the beginning.\n\nWelcome to Bit House. 🏠",
+    "cta": "Follow the build.",
+    "notes": "Post de abertura da campanha. Priorizar ritmo visual e identidade da marca."
+  },
+  {
+    "day": 2,
+    "date": "2026-08-22",
+    "time": "12:00",
+    "title": "Quem somos",
+    "pillar": "Community",
+    "funnel": "TOFU",
+    "format": "Imagem / Carrossel",
+    "objective": "Humanizar a marca e apresentar a equipe.",
+    "idea": "Apresentar os integrantes da Bit House e suas especialidades.",
+    "hook": "3 people. Different skills. One house.",
+    "caption": "We're a small team building big ideas.\n\n🎨 3D Art\n💻 Development\n🎮 Game Design\n🖥️ UI\n\nThis is Bit House.",
+    "cta": "What do you create?",
+    "notes": "Usar fotos/avatares ou representações visuais consistentes da equipe."
+  },
+  {
+    "day": 3,
+    "date": "2026-08-23",
+    "time": "12:00",
+    "title": "Antes → Depois",
+    "pillar": "Showcase",
+    "funnel": "TOFU / MOFU",
+    "format": "Carrossel / Vídeo",
+    "objective": "Mostrar qualidade e processo de transformação.",
+    "idea": "Blockout simples evoluindo até o asset final.",
+    "hook": "It started like this.",
+    "caption": "From a simple blockout to a game-ready asset.\n\nThe final model is only part of the process.\n\nThe real work happens before you see the finished piece.",
+    "cta": "Want to see the process?",
+    "notes": "Abrir com o blockout por 1–2 segundos antes de revelar o final."
+  },
+  {
+    "day": 4,
+    "date": "2026-08-24",
+    "time": "12:00",
+    "title": "Silhueta antes do detalhe",
+    "pillar": "Game Dev Knowledge",
+    "funnel": "MOFU",
+    "format": "Carrossel",
+    "objective": "Demonstrar domínio de fundamentos de 3D.",
+    "idea": "Comparar três silhuetas e explicar leitura visual.",
+    "hook": "Your model doesn't need more details. It needs a better silhouette.",
+    "caption": "Before adding more polygons, ask a simpler question:\n\nCan the player understand the shape from a distance?\n\nSilhouette first. Details second.",
+    "cta": "Which silhouette reads better?",
+    "notes": "Ideal para gerar respostas A/B."
+  },
+  {
+    "day": 5,
+    "date": "2026-08-25",
+    "time": "18:00",
+    "title": "A ou B?",
+    "pillar": "Community",
+    "funnel": "TOFU",
+    "format": "Enquete / Imagem",
+    "objective": "Gerar respostas e ensinar o algoritmo sobre o público da Bit House.",
+    "idea": "Duas versões do mesmo asset com diferenças de proporção, cor ou detalhe.",
+    "hook": "A or B?",
+    "caption": "Same concept. Different execution.\n\nWhich one would you put in a Roblox game?",
+    "cta": "Reply with A or B — and tell us why.",
+    "notes": "Pergunta simples, resposta de baixa fricção."
+  },
+  {
+    "day": 6,
+    "date": "2026-08-26",
+    "time": "18:00",
+    "title": "POV: só uma pequena mudança",
+    "pillar": "Behind the Scenes",
+    "funnel": "TOFU",
+    "format": "Meme / Vídeo",
+    "objective": "Humanizar o estúdio e gerar identificação.",
+    "idea": "Mostrar uma alteração aparentemente pequena que vira várias horas de trabalho.",
+    "hook": "POV: you said 'it's just a small change.'",
+    "caption": "POV: “It's just a small change.”\n\n3 hours later... 😂\n\nGame development.",
+    "cta": "Every dev has been here.",
+    "notes": "Humor rápido. Não transformar em reclamação; mostrar domínio e leveza."
+  },
+  {
+    "day": 7,
+    "date": "2026-08-27",
+    "time": "18:00",
+    "title": "Week 01 — Recap",
+    "pillar": "Build in Public",
+    "funnel": "MOFU",
+    "format": "Thread / Vídeo",
+    "objective": "Consolidar a narrativa da primeira semana.",
+    "idea": "Recapitular manifesto, equipe, processo e primeiro showcase.",
+    "hook": "Week 01 at Bit House.",
+    "caption": "Week 01 at Bit House.\n\nWe introduced the team.\nWe showed the process.\nWe built, tested and shared.\n\nAnd we're just getting started. 🏠",
+    "cta": "Follow the next build.",
+    "notes": "Fixar respostas com links/portfólio se houver."
+  },
+  {
+    "day": 8,
+    "date": "2026-08-28",
+    "time": "18:00",
+    "title": "Como começamos um asset",
+    "pillar": "Build in Public",
+    "funnel": "MOFU",
+    "format": "Carrossel",
+    "objective": "Ensinar o pipeline de modelagem.",
+    "idea": "Primitive → Blockout → Refined.",
+    "hook": "This is how we start a 3D asset.",
+    "caption": "We don't start with details.\n\nWe start with:\n→ shape\n→ proportions\n→ silhouette\n→ readability\n\nThen we build the details.",
+    "cta": "Save this for your next asset.",
+    "notes": "Conteúdo de alto potencial de salvamento."
+  },
+  {
+    "day": 9,
+    "date": "2026-08-29",
+    "time": "12:00",
+    "title": "Low-poly ≠ baixa qualidade",
+    "pillar": "Game Dev Knowledge",
+    "funnel": "MOFU",
+    "format": "Carrossel",
+    "objective": "Posicionar a Bit House como referência em 3D estilizado.",
+    "idea": "Explicar silhouette, proportions, topology e readability.",
+    "hook": "Low-poly doesn't mean low quality.",
+    "caption": "Low-poly is not about removing quality.\n\nIt's about choosing where quality matters.\n\nSilhouette.\nProportion.\nTopology.\nReadability.",
+    "cta": "Agree or disagree?",
+    "notes": "Usar visual comparativo para evitar texto excessivo."
+  },
+  {
+    "day": 10,
+    "date": "2026-08-30",
+    "time": "12:00",
+    "title": "Timelapse de modelagem",
+    "pillar": "Behind the Scenes",
+    "funnel": "TOFU",
+    "format": "Vídeo",
+    "objective": "Alcançar público novo com conteúdo visual.",
+    "idea": "Timelapse de Blender com transformação completa.",
+    "hook": "2 hours of modeling condensed into 20 seconds.",
+    "caption": "2 hours of modeling.\n\n20 seconds to watch.\n\nFrom empty scene to finished asset.",
+    "cta": "Would you watch the full process?",
+    "notes": "Primeiros 2 segundos precisam mostrar movimento/resultados."
+  },
+  {
+    "day": 11,
+    "date": "2026-08-31",
+    "time": "12:00",
+    "title": "Nós erramos este asset",
+    "pillar": "Behind the Scenes",
+    "funnel": "MOFU",
+    "format": "Antes / Depois",
+    "objective": "Mostrar capacidade de análise e melhoria.",
+    "idea": "Primeira versão problemática → diagnóstico → versão corrigida.",
+    "hook": "We messed this asset up.",
+    "caption": "The first version looked fine.\n\nUntil we tested it in-game.\n\nHere's what we changed — and why the second version works better.",
+    "cta": "Would you have changed the same thing?",
+    "notes": "O erro deve ser técnico/visual, não uma falha que exponha cliente."
+  },
+  {
+    "day": 12,
+    "date": "2026-09-01",
+    "time": "18:00",
+    "title": "Performance importa",
+    "pillar": "Game Dev Knowledge",
+    "funnel": "MOFU",
+    "format": "Carrossel",
+    "objective": "Mostrar visão de produção real.",
+    "idea": "Explicar por que asset bonito precisa ser eficiente no jogo.",
+    "hook": "A beautiful asset is useless if it kills your performance.",
+    "caption": "A game asset has two jobs:\n\nLook good.\nRun well.\n\nGood production is finding the balance between both.",
+    "cta": "Performance or visual quality — what matters more?",
+    "notes": "Evitar números técnicos sem dados reais do projeto."
+  },
+  {
+    "day": 13,
+    "date": "2026-09-02",
+    "time": "12:00",
+    "title": "Viewport → Roblox",
+    "pillar": "Showcase",
+    "funnel": "MOFU / BOFU",
+    "format": "Vídeo",
+    "objective": "Mostrar que o trabalho vai além do render.",
+    "idea": "Asset no Blender e depois implementado dentro do jogo.",
+    "hook": "From viewport to game.",
+    "caption": "From viewport to game.\n\nThis is where an asset becomes part of a world.",
+    "cta": "Want to see more assets in-game?",
+    "notes": "Mostrar claramente a aplicação real."
+  },
+  {
+    "day": 14,
+    "date": "2026-09-03",
+    "time": "18:00",
+    "title": "O que é mais difícil no game dev?",
+    "pillar": "Community",
+    "funnel": "TOFU",
+    "format": "Enquete",
+    "objective": "Gerar conversa com desenvolvedores.",
+    "idea": "Perguntar qual área é mais difícil: Art, Code, Design ou Marketing.",
+    "hook": "Game devs: what's the hardest part of building a game?",
+    "caption": "Game devs:\n\nWhat's the hardest part of building a game?\n\n🎨 Art\n💻 Code\n🎮 Design\n📣 Marketing",
+    "cta": "Pick one. No cheating.",
+    "notes": "A equipe deve responder os comentários com opiniões reais."
+  },
+  {
+    "day": 15,
+    "date": "2026-09-04",
+    "time": "18:00",
+    "title": "5 checks antes de finalizar um asset",
+    "pillar": "Game Dev Knowledge",
+    "funnel": "MOFU",
+    "format": "Carrossel",
+    "objective": "Criar conteúdo salvável e autoridade.",
+    "idea": "Silhouette, proportion, materials, optimization, in-game readability.",
+    "hook": "5 things we check before calling an asset finished.",
+    "caption": "Before we call an asset finished, we check:\n\n1. Silhouette\n2. Proportion\n3. Materials\n4. Optimization\n5. In-game readability\n\nThe final render isn't the finish line.",
+    "cta": "Save this checklist.",
+    "notes": "Formato perfeito para salvar/compartilhar."
+  },
+  {
+    "day": 16,
+    "date": "2026-09-05",
+    "time": "12:00",
+    "title": "Mesma mesh, outra sensação",
+    "pillar": "Showcase",
+    "funnel": "TOFU",
+    "format": "Antes / Depois",
+    "objective": "Mostrar impacto de materiais e texturas.",
+    "idea": "Mesma modelagem com diferentes materiais/texturas.",
+    "hook": "Same mesh. Completely different feeling.",
+    "caption": "Same geometry.\n\nDifferent materials.\nDifferent lighting.\nDifferent feeling.\n\nArt direction changes everything.",
+    "cta": "Which version wins?",
+    "notes": "A/B visual forte."
+  },
+  {
+    "day": 17,
+    "date": "2026-09-06",
+    "time": "12:00",
+    "title": "Por que jogadores não veem 90% do trabalho",
+    "pillar": "Game Dev Knowledge",
+    "funnel": "MOFU",
+    "format": "Thread",
+    "objective": "Demonstrar pensamento de game design e direção visual.",
+    "idea": "Explicar visual hierarchy e por que certos detalhes existem para servir o jogador.",
+    "hook": "Why players don't notice 90% of the work you do.",
+    "caption": "Players don't need to notice every detail.\n\nThey need to notice the right detail.\n\nThat's visual hierarchy.",
+    "cta": "What game does visual hierarchy really well?",
+    "notes": "Thread com exemplos visuais."
+  },
+  {
+    "day": 18,
+    "date": "2026-09-07",
+    "time": "12:00",
+    "title": "Wireframe → UI final",
+    "pillar": "Showcase",
+    "funnel": "MOFU",
+    "format": "Carrossel / Vídeo",
+    "objective": "Introduzir UI como parte do escopo da Bit House.",
+    "idea": "Mostrar wireframe, iteração e UI final.",
+    "hook": "Good UI shouldn't compete with the game.",
+    "caption": "Good UI shouldn't compete with the game.\n\nIt should guide the player through it.\n\nWireframe → iteration → final.",
+    "cta": "Would you change anything?",
+    "notes": "Usar um exemplo real ou demonstrativo."
+  },
+  {
+    "day": 19,
+    "date": "2026-09-08",
+    "time": "18:00",
+    "title": "Hot take: mais detalhe ≠ melhor",
+    "pillar": "Community",
+    "funnel": "TOFU",
+    "format": "Imagem / Texto",
+    "objective": "Gerar debate entre artistas e devs.",
+    "idea": "Opinião curta sobre excesso de detalhes em assets.",
+    "hook": "Hot take: more detail ≠ better asset.",
+    "caption": "Hot take:\n\nMore detail doesn't automatically mean a better asset.\n\nSometimes the best optimization is knowing what to remove.",
+    "cta": "Agree or fight me in the replies.",
+    "notes": "Tom provocativo, mas técnico."
+  },
+  {
+    "day": 20,
+    "date": "2026-09-09",
+    "time": "18:00",
+    "title": "Um dia na Bit House",
+    "pillar": "Behind the Scenes",
+    "funnel": "TOFU",
+    "format": "Vídeo",
+    "objective": "Humanizar o estúdio.",
+    "idea": "Montagem rápida de Blender, scripting, UI, reuniões, testes e bugs.",
+    "hook": "What a normal day at Bit House looks like.",
+    "caption": "A normal day at Bit House:\n\nModel.\nCode.\nTest.\nBreak something.\nFix it.\nRepeat.",
+    "cta": "Welcome to game development. 😂",
+    "notes": "Conteúdo leve e compartilhável."
+  },
+  {
+    "day": 21,
+    "date": "2026-09-10",
+    "time": "18:00",
+    "title": "Mini-case: ideia → jogo",
+    "pillar": "Build in Public",
+    "funnel": "MOFU / BOFU",
+    "format": "Thread / Carrossel",
+    "objective": "Demonstrar pipeline completo.",
+    "idea": "Idea → Reference → Blockout → Modeling → Texture → Implementation → Final.",
+    "hook": "How we turned an idea into a playable asset.",
+    "caption": "From idea to playable asset.\n\nReference → Blockout → Modeling → Texture → Implementation → Final.\n\nEvery stage changes the result.",
+    "cta": "Which stage should we break down next?",
+    "notes": "Ideal para apresentar serviço sem fazer venda direta."
+  },
+  {
+    "day": 22,
+    "date": "2026-09-11",
+    "time": "18:00",
+    "title": "O que fazemos na Bit House",
+    "pillar": "Business / Studio",
+    "funnel": "BOFU",
+    "format": "Showcase / Carrossel",
+    "objective": "Apresentar claramente o escopo comercial.",
+    "idea": "Montagem de 3D Assets, Environment, UI e Development.",
+    "hook": "Here's what we actually do at Bit House.",
+    "caption": "We build the pieces that turn game ideas into playable experiences.\n\n🎨 3D Assets\n🌎 Environments\n🖥️ UI\n💻 Development\n\nBuilt for games. Built to work.",
+    "cta": "Building a game? Let's talk.",
+    "notes": "Primeiro post comercial explícito da campanha."
+  },
+  {
+    "day": 23,
+    "date": "2026-09-12",
+    "time": "12:00",
+    "title": "Game-ready assets",
+    "pillar": "Business / Studio",
+    "funnel": "BOFU",
+    "format": "Carrossel",
+    "objective": "Atrair potenciais clientes de 3D.",
+    "idea": "Mostrar props, environment, characters e assets estilizados.",
+    "hook": "Need game-ready assets?",
+    "caption": "Need game-ready assets?\n\nWe can help with:\n\n🎨 Props\n🌎 Environments\n🐾 Characters\n📦 Asset packs\n\nDesigned for your game — not just for the render.",
+    "cta": "DM us with your project.",
+    "notes": "CTA comercial direto."
+  },
+  {
+    "day": 24,
+    "date": "2026-09-13",
+    "time": "12:00",
+    "title": "O que já construímos",
+    "pillar": "Business / Studio",
+    "funnel": "BOFU",
+    "format": "Portfolio Reel",
+    "objective": "Criar prova visual de capacidade.",
+    "idea": "Montagem dos melhores trabalhos/projetos já feitos.",
+    "hook": "A few things we've built.",
+    "caption": "A few things we've built.\n\nDifferent projects.\nDifferent challenges.\nSame goal:\n\nBuild something players remember.",
+    "cta": "Want to build something with us?",
+    "notes": "Usar somente trabalhos que podem ser divulgados."
+  },
+  {
+    "day": 25,
+    "date": "2026-09-14",
+    "time": "12:00",
+    "title": "Como funciona contratar um estúdio",
+    "pillar": "Business / Studio",
+    "funnel": "BOFU",
+    "format": "Carrossel",
+    "objective": "Reduzir fricção comercial explicando o processo.",
+    "idea": "Brief → Concept → Production → Review → Delivery.",
+    "hook": "What happens after you hire a game development studio?",
+    "caption": "What happens after you hire a game development studio?\n\n1. Brief\n2. Concept\n3. Production\n4. Review\n5. Delivery\n\nClear process. Clear communication. Better results.",
+    "cta": "Have a project in mind? Send us the brief.",
+    "notes": "Excelente para clientes que ainda não sabem como iniciar."
+  },
+  {
+    "day": 26,
+    "date": "2026-09-15",
+    "time": "18:00",
+    "title": "O que torna um asset game-ready?",
+    "pillar": "Game Dev Knowledge",
+    "funnel": "MOFU",
+    "format": "Carrossel",
+    "objective": "Educar e reforçar expertise comercial.",
+    "idea": "Optimization, scale, topology, textures, performance e implementation.",
+    "hook": "What makes an asset 'game-ready'?",
+    "caption": "A game-ready asset isn't just a pretty model.\n\nIt needs:\n→ correct scale\n→ optimized geometry\n→ usable textures\n→ good readability\n→ performance in-game\n→ clean implementation",
+    "cta": "Save this for your next project.",
+    "notes": "Conectar conhecimento com serviço."
+  },
+  {
+    "day": 27,
+    "date": "2026-09-16",
+    "time": "18:00",
+    "title": "Prova social / números",
+    "pillar": "Business / Studio",
+    "funnel": "BOFU",
+    "format": "Case / Infográfico",
+    "objective": "Transformar portfólio em prova de impacto.",
+    "idea": "Mostrar números reais: visitas, projetos, assets, clientes ou alcance.",
+    "hook": "The numbers behind our work.",
+    "caption": "Behind every number is a team, a deadline and a lot of iteration.\n\n[INSERIR NÚMERO REAL]\nprojects.\n[INSERIR NÚMERO REAL]\nassets.\n[INSERIR NÚMERO REAL]\nplayers reached.\n\nAnd we're still building.",
+    "cta": "Let's build the next one.",
+    "notes": "SUBSTITUIR TODOS OS CAMPOS antes de publicar. Não inventar métricas."
+  },
+  {
+    "day": 28,
+    "date": "2026-09-17",
+    "time": "18:00",
+    "title": "Se pudesse criar qualquer jogo...",
+    "pillar": "Community",
+    "funnel": "TOFU",
+    "format": "Pergunta / Imagem",
+    "objective": "Gerar conversa e descobrir interesses do público.",
+    "idea": "Pergunta aberta sobre o jogo que a pessoa criaria amanhã.",
+    "hook": "If you could build any game tomorrow, what would you make?",
+    "caption": "If you could build any game tomorrow — no budget limits, no deadlines, no restrictions —\n\nwhat would you make?\n\nWe're listening. 👀",
+    "cta": "Drop the idea below.",
+    "notes": "A equipe deve interagir com as melhores ideias."
+  },
+  {
+    "day": 29,
+    "date": "2026-09-18",
+    "time": "18:00",
+    "title": "30 days of building — Recap",
+    "pillar": "Build in Public",
+    "funnel": "TOFU / MOFU",
+    "format": "Vídeo 30–45s",
+    "objective": "Fechar a narrativa e consolidar reconhecimento.",
+    "idea": "Day 1 → Day 7 → Day 15 → Day 21 → Day 29 → Bit House.",
+    "hook": "30 days of building.",
+    "caption": "30 days of building.\n\nWe showed the models.\nWe showed the process.\nWe showed the mistakes.\nWe showed the people behind the work.\n\nAnd we're only getting started.\n\nWelcome to Bit House. 🏠",
+    "cta": "Follow what comes next.",
+    "notes": "Um dos principais vídeos da campanha. Ritmo alto e melhores trabalhos primeiro."
+  },
+  {
+    "day": 30,
+    "date": "2026-09-19",
+    "time": "12:00",
+    "title": "Have a game idea? Let's build it.",
+    "pillar": "Business / Studio",
+    "funnel": "BOFU",
+    "format": "Vídeo / CTA",
+    "objective": "Converter atenção acumulada em conversas comerciais.",
+    "idea": "Mostrar os melhores resultados da campanha e terminar com convite comercial.",
+    "hook": "Have a game idea? Let's build it.",
+    "caption": "Great games don't start with a finished model.\n\nThey start with an idea.\n\nIf you're building a Roblox experience and need help with:\n\n🎨 3D Assets\n🎮 Game Development\n🖥️ UI\n🌎 Environments\n\nLet's talk.\n\nBit House 🏠",
+    "cta": "DM us with your project.",
+    "notes": "Fechamento comercial. Deixar o perfil e portfólio completamente atualizados antes deste post."
+  }
+];
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>
