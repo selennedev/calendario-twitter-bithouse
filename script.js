@@ -1,9 +1,101 @@
 const RAW_POSTS = window.BIT_HOUSE_POSTS || [];
 
-// A campanha agora começa em 01/09/2026.
-// O conteúdo de cada DAY é preservado; apenas a data é recalculada,
-// deixando DAY 01 = 01/09, DAY 02 = 02/09 ... DAY 30 = 30/09.
-const CAMPAIGN_START = "2026-09-01";
+// A campanha começa em 17/09/2026.
+// Os conteúdos dos primeiros 7 dias foram atualizados para a nova sequência editorial.
+const CAMPAIGN_START = "2026-09-17";
+
+const FIRST_WEEK = {
+  1: {
+    title: "Apresentação / Posicionamento da BitHouse",
+    pillar: "Business / Studio",
+    funnel: "TOFU",
+    format: "Imagem / Showcase",
+    objective: "Apresentar a BitHouse, seu posicionamento e as áreas de atuação do estúdio.",
+    idea: "Apresentar a BitHouse como estúdio de criação para games, mostrando de forma clara o que o estúdio faz e o tipo de trabalho que entrega.",
+    hook: "We don't just make assets. We build worlds.",
+    caption: "We're BitHouse. 🏠\n\nWe create the visual worlds behind games.\n\n3D assets. Characters. Creatures. Vehicles. Environments. Props.\n\nFrom the first reference to the final game-ready result, we build with purpose.\n\nThis is BitHouse. Welcome to the build.",
+    cta: "Follow the build.",
+    notes: "Post de abertura da nova sequência. Usar um showcase forte e representativo da variedade de trabalhos da BitHouse."
+  },
+  2: {
+    title: "Showcase de personagens / Character Design",
+    pillar: "Showcase",
+    funnel: "TOFU / MOFU",
+    format: "Carrossel / Showcase",
+    objective: "Mostrar a qualidade e a variedade do character design produzido pela BitHouse.",
+    idea: "Carrossel com personagens e diferentes estilos, destacando silhueta, proporções e identidade visual.",
+    hook: "Characters should be recognizable before you see the details.",
+    caption: "Character design is more than a model.\n\nIt's silhouette. Proportion. Personality. Readability.\n\nA few of the characters we've been building at BitHouse.",
+    cta: "Which character stands out to you?",
+    notes: "Selecionar personagens visualmente fortes dos trabalhos já produzidos."
+  },
+  3: {
+    title: "Criaturas e animais",
+    pillar: "Showcase",
+    funnel: "TOFU / MOFU",
+    format: "Carrossel / Showcase",
+    objective: "Mostrar a capacidade da BitHouse em criar criaturas e animais estilizados para games.",
+    idea: "Reunir criaturas e animais em uma composição que mostre variedade de formas, temas e estilos.",
+    hook: "A game world needs creatures with personality.",
+    caption: "Creatures bring a world to life. 🐉\n\nFrom cute companions to fantasy creatures, we design them to be readable, memorable and game-ready.",
+    cta: "Which one belongs in a game?",
+    notes: "Priorizar criaturas e animais com silhuetas diferentes entre si."
+  },
+  4: {
+    title: "Assets e Props",
+    pillar: "Showcase",
+    funnel: "TOFU / MOFU",
+    format: "Carrossel",
+    objective: "Mostrar a variedade de assets e props que a BitHouse pode produzir para compor jogos.",
+    idea: "Showcase de objetos, props e assets de cenário, organizados como uma pequena biblioteca visual.",
+    hook: "The small details make the world feel real.",
+    caption: "Props are what turn an empty scene into a world.\n\nObjects, decorations and game-ready assets designed to support the experience.",
+    cta: "What would you add to your game?",
+    notes: "Usar uma seleção variada de props, sem sobrecarregar o carrossel."
+  },
+  5: {
+    title: "Veículos",
+    pillar: "Showcase",
+    funnel: "TOFU / MOFU",
+    format: "Carrossel / Showcase",
+    objective: "Apresentar veículos e modelos de transporte criados pela BitHouse.",
+    idea: "Showcase de veículos com diferentes estilos e aplicações dentro de jogos.",
+    hook: "Every world needs a way to move through it.",
+    caption: "Vehicles are part of the world-building. 🏎️\n\nDifferent shapes, different styles, same goal: making the game world feel complete.",
+    cta: "Which style would you choose?",
+    notes: "Selecionar veículos visualmente diferentes para mostrar amplitude de produção."
+  },
+  6: {
+    title: "Ambientes e mapas",
+    pillar: "Showcase",
+    funnel: "TOFU / MOFU",
+    format: "Carrossel / Showcase",
+    objective: "Mostrar a BitHouse criando ambientes, mapas e espaços completos para experiências de jogo.",
+    idea: "Apresentar diferentes ambientes e mapas, destacando composição, escala, atmosfera e leitura do espaço.",
+    hook: "Assets make a scene. Environments make a world.",
+    caption: "A collection of assets becomes something bigger when they work together.\n\nEnvironments are where the pieces become a world.",
+    cta: "Which world would you explore first?",
+    notes: "Usar imagens com visão mais ampla e boa leitura do ambiente."
+  },
+  7: {
+    title: "Processo de criação: referência → modelagem → resultado",
+    pillar: "Build in Public",
+    funnel: "MOFU",
+    format: "Carrossel / Antes e Depois",
+    objective: "Mostrar o processo de criação da BitHouse e transformar o resultado final em prova de domínio técnico.",
+    idea: "Mostrar uma referência, a etapa de modelagem e o resultado final em sequência clara.",
+    hook: "From reference to game-ready.",
+    caption: "Every finished asset has a process behind it.\n\nReference → Modeling → Final result.\n\nHere's how an idea becomes something you can actually put inside a game.",
+    cta: "Want to see more of the process?",
+    notes: "Escolher um trabalho que tenha uma referência clara e uma transformação visual forte."
+  }
+};
+
+const POSTS = RAW_POSTS.map(post => ({
+  ...post,
+  ...(FIRST_WEEK[post.day] || {}),
+  date: addDays(CAMPAIGN_START, post.day - 1)
+}));
 
 function addDays(dateStr, amount) {
   const d = new Date(dateStr + "T12:00:00");
@@ -11,12 +103,7 @@ function addDays(dateStr, amount) {
   return d.toISOString().slice(0, 10);
 }
 
-const POSTS = RAW_POSTS.map(post => ({
-  ...post,
-  date: addDays(CAMPAIGN_START, post.day - 1)
-}));
-
-const STORAGE_KEY = "bithouse-content-calendar-v1";
+const STORAGE_KEY = "bithouse-content-calendar-v2";
 
 const defaultState = {
   posts: Object.fromEntries(
