@@ -1,0 +1,57 @@
+name: Enable database persistence
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "database.js"
+      - ".github/workflows/enable_database.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  patch-index:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Connect site to database
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("index.html")
+          text = path.read_text(encoding="utf-8")
+
+          old = '<script src="script.js"></script>'
+          new = '<script src="database.js"></script>'
+
+          changed = False
+          if old in text and 'database.js' not in text:
+              text = text.replace(old, new, 1)
+              changed = True
+
+          old_label = 'Dados salvos neste navegador.'
+          new_label = 'Dados salvos no banco de dados.'
+          if old_label in text:
+              text = text.replace(old_label, new_label, 1)
+              changed = True
+
+          if changed:
+              path.write_text(text, encoding="utf-8")
+          PY
+
+      - name: Commit changes
+        run: |
+          if git diff --quiet; then
+            echo "Index already connected."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Connect calendar to database"
+          git push
