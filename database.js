@@ -64,6 +64,12 @@
     const app = document.createElement("script");
     app.src = "script.js";
     app.async = false;
+    app.onload = () => {
+      const editor = document.createElement("script");
+      editor.src = "editor.js";
+      editor.async = false;
+      document.head.appendChild(editor);
+    };
     document.head.appendChild(app);
   }
 
