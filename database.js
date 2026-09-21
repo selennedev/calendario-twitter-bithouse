@@ -62,11 +62,11 @@
     };
 
     const app = document.createElement("script");
-    app.src = "script.js";
+    app.src = "script.js?v=20260921-2";
     app.async = false;
     app.onload = () => {
       const editor = document.createElement("script");
-      editor.src = "editor.js";
+      editor.src = "editor.js?v=20260921-2";
       editor.async = false;
       document.head.appendChild(editor);
     };
