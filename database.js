@@ -1,7 +1,7 @@
 (() => {
   const SUPABASE_URL = "https://cxiyamirmygkwxrtavnl.supabase.co";
   const SUPABASE_KEY = "sb_publishable_opYIyBDyYJ9av58IFeuGig_i1WFnS2D";
-  const STORAGE_KEY = "bithouse-content-calendar-v2";
+  const STORAGE_KEY = "bithouse-content-calendar-v3";
   const ROW_ID = "main";
 
   const originalSetItem = Storage.prototype.setItem;
@@ -62,11 +62,11 @@
     };
 
     const app = document.createElement("script");
-    app.src = "script.js?v=20260921-2";
+    app.src = "script.js?v=20261002-1";
     app.async = false;
     app.onload = () => {
       const editor = document.createElement("script");
-      editor.src = "editor.js?v=20260921-2";
+      editor.src = "editor.js?v=20261002-1";
       editor.async = false;
       document.head.appendChild(editor);
     };
